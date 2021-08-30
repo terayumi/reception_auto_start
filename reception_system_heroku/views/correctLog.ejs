@@ -1,0 +1,19 @@
+<script>
+  //変更ログの受け取り、表示
+  socket.on('correct', function (data) {
+    console.log(data);
+    let logArea = document.getElementById('correctLog');
+    let newLog;
+    if (data.meth == 'change') {
+      console.log('change');
+      newLog = document.createTextNode(data.num + '番を' + data.detail + 'に変更しました');
+    } else if (data.meth == 'cancel') {
+      newLog = document.createTextNode(data.num + '番の呼び出しを取り消しました')
+    }
+    let li = document.createElement('li');
+    console.log(newLog);
+    li.appendChild(newLog);
+    logArea.appendChild(li);
+  })
+
+</script>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>呼び出し画面</title>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+
+
+  <body>
+    <div class="container">
+      <div class="hedder"><span>ご案内番号</span><img src="ロゴ.png" class="img"></div>
+      <div class="main">
+        <div class="number" id="number"></div>
+        <div class="room" id="room"></div>
+      </div>
+      <div class="sub">
+        <div class="a">呼び出し中の番号</div>
+        <div class="list" id="list">
+          <% for( let i=1; i < 17; i++ ) { %>
+            <div class="box"></div>
+            <% } %>
+        </div>
+      </div>
+      <div class="info" id="info"></div>
+    </div>
+    <button onclick="on('fullscreen')" id="fullsc">全画面</button>
+
+
+    <script>
+      //フルスクリーンボタン
+      let fullsc = document.getElementById('fullsc');
+      function on(name) {
+        document.body.requestFullscreen();
+        //fullsc.style.display = 'none';
+      }
+
+      //画面起動時の処理
+      window.onload = function () {
+        socket.emit('reqList', {});
+      }
+      //リストの表示
+      let socket = io.connect();
+      let number = document.getElementById('number');
+      let room = document.getElementById('room');
+      let text;
+      let kari;
+      socket.on('resList', (data) => {
+        listData = data.value;
+        write();
+      })
+      //それぞれの画面に表示する要素の絞り込み  
+      function select() {
+        selected = [];
+        for (let i = 0; i < listData.length; i++) {
+          if (listData[i].call) {
+            selected.push(listData[i]);
+          }
+        }
+        return selected;
+      }
+      //リストの表示
+      let list = document.getElementById('list');
+      function write() {
+        let selected = select();
+        list.innerHTML = '';
+        for (let i = 0; i < selected.length; i++) {
+          kari = '<div class="box"><div>' + selected[i].number + '</div></div>';
+          list.insertAdjacentHTML("beforeend", kari);
+        }
+        for (let i = 0; i < 16 - selected.length; i++) {
+          kari = '<div class="box"></div>';
+          list.insertAdjacentHTML("beforeend", kari);
+        }
+      }
+
+      //呼び出し音声,モニターメイン表示
+      let speech, sp1, sp2, t;
+      socket.on('call', (data) => {
+        numHTML = '<p style="font-size:20em;color:black;">' + data.num + '<span style="font-size:0.6em;color:#575757;">番</span></p>';
+        t = data.place;
+        sp1 = '';
+        sp2 = '';
+        switch (t) {
+          case '診察室1':
+          case '診察室2':
+          case '診察室3':
+          case '診察室4':
+          case '診察室5':
+          case '診察室6':
+          case '診察室7':
+            roomHTML = '<p style="font-size:12em; color:#575757; ">診察室<span style="font-size:1.8em; color:black;">' + data.place.substr(3, 1) + '</span></p>';
+            sp1 = '待合室、左の入口より、';
+            sp2 = t + 'に、おはいりください'
+            break;
+          case '診察室8':
+          case '診察室9':
+          case '診察室10':
+          case '診察室11':
+          case '診察室12':
+          case '診察室13':
+            roomHTML = '<p style="font-size:12em; color:#575757; ">診察室<span style="font-size:1.8em; color:black;">' + data.place.substr(3, 1) + '</span></p>';
+            sp1 = '待合室、右の入口より、';
+            sp2 = t + 'に、おはいりください';
+            break;
+          case '会計':
+            roomHTML = '<p style="font-size:18em;">会計</p>';
+            sp2 = '会計窓口へ、お越しください'
+            break;
+        }
+        speech = '受付番号、' + data.num + '番のかた、' + sp1 + sp2;
+        let obj = { text: speech, numHTML: numHTML, roomHTML: roomHTML };
+        speak(obj); //speak.ejsの関数
+      })
+
+      //案内文
+      let textNode;
+      let textData;
+      let textArea = document.getElementById('info');
+      socket.on('infoText', function (data) {
+        console.log(data);
+        textData = data.text;
+        console.log(textData);
+        textArea.innerHTML = "<marquee>" + textData + "</marquee>";
+      })
+    </script>
+    <%- include('speak') %>
+      <%- include('design') %>
+        <style>
+          .container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 55% 45%;
+            grid-template-rows: 14% 78% 8%;
+
+          }
+
+          .hedder {
+            grid-column: 1/5;
+            font-size: 6em;
+          }
+
+
+          .main {
+            background: radial-gradient(ellipse farthest-side, #B5DCFF, #C1E2FF, #FFFFFF);
+            grid-column-start: 1;
+            grid-column-end: 2;
+          }
+
+          .list {
+            background-color: white;
+          }
+
+          .number {
+            height: 55%;
+            width: 100%;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+          }
+
+          .room {
+            height: 40%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+          }
+
+          span {
+            vertical-align: baseline;
+          }
+
+          p {
+            margin: 0px;
+          }
+
+          .sub {
+            grid-column-start: 2;
+            grid-column-end: 3;
+            display: grid;
+            grid-template-rows: 10% 90%;
+          }
+
+          .a {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+
+            background-color: #B5DCFF;
+
+          }
+
+          .list {
+            display: grid;
+            grid-template-columns: 25% 25% 25% 25%;
+            grid-template-rows: 25% 25% 25% 25%;
+          }
+
+          .box {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            border: 1px solid #CDCDCD;
+
+            font-size: 8em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .info {
+            width: 100%;
+            height: 100%;
+            background-color: #2F6098;
+            grid-column: 1/5;
+
+            font-size: 3em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+          }
+
+          .img {
+            position:absolute;
+            width: 450px;
+            transform: translateY(5%);
+            right: 2%;
+          }
+        </style>
+  </body>

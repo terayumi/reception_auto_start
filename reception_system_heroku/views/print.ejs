@@ -1,0 +1,96 @@
+<script type="text/javascript" src="javascripts/printerIP.js"></script>
+<script>
+  //プリンター制御
+  var ePosDev = new epson.ePOSDevice();
+  function connect() {
+    var port = '8008';
+    var options = { 'eposprint': true };
+    ePosDev.connect(ipAddress, port, callback_connect, { "eposprint": true });
+
+
+  }
+  function callback_connect(resultConnect) {
+    var deviceId = 'local_printer';
+    var options = { 'crypto': false, 'buffer': false };
+    if ((resultConnect == 'OK') || (resultConnect == 'SSL_CONNECT_OK')) {
+      //Printer オブジェクトを取得する
+      ePosDev.createDevice(deviceId, ePosDev.DEVICE_TYPE_PRINTER, options,
+        callback_createDevice);
+      console.log(resultConnect + "[connect]");
+      alert('プリンターに接続しました')
+    }
+    else {
+      // エラーメッセージ表示
+      console.log(resultConnect + "[connect]");
+      alert('プリンターに接続できませんでした。再読み込みしてください。');
+    }
+  }
+  var printer = null;
+  function callback_createDevice(deviceObj, errorCode) {
+    if (deviceObj === null) {
+      // Printer オブジェクト取得失敗、エラーメッセージ表示
+      console.log(errorCode + "[createDevice]");
+      alert('プリンターに接続できませんでした。再読み込みしてください。');
+      return;
+    }
+    printer = deviceObj;
+    console.log(printer);
+    // 印刷完了イベントを登録
+    printer.onreceive = function (response) {
+      if (response.success) {
+        // 印刷成功メッセージ表示
+        console.log('print success');
+      }
+      else {
+        // エラーメッセージ表示
+        console.log(response + "[printerror]");
+        alert('プリントに失敗しました');
+      }
+    }
+  }
+  function createData(room, num, time) {
+    console.log('createData');
+    printer.addTextAlign(printer.ALIGN_CENTER);
+    printer.addTextSize(2, 2);
+    printer.addTextLang('ja');
+
+    printer.addText('寺嶋歯科医院\n');
+    printer.addTextAlign(printer.ALIGN_RIGHT);
+    printer.addTextSize(1, 1);
+    printer.addText(time+'\n');
+    printer.addTextAlign(printer.ALIGN_CENTER);
+    printer.addTextSize(2, 2);
+    printer.addText(num + '\n\n');
+    printer.addText(room + '\n');
+    printer.addCut();
+    //printer.addText(data+'\n');
+  }
+
+  function send() {
+    if (ePosDev.isConnected) {
+      console.log('send');
+      printer.send();
+    } else {
+      console.log('プリンターと接続していません');
+    }
+  }
+
+  function recover() {
+    printer.recover();
+  }
+  connect();
+  //setTimeout(createData, 20000);
+  //setTimeout(send, 25000);
+
+  var room = '';
+  var num = '';
+  var time = '';
+  socket.on('print', function (data) {
+    console.log('printsocket');
+    room = data.room;
+    num = data.number;
+    time = data.startTime;
+    createData(room, num, time);
+    send();
+  })
+</script>

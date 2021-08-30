@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <select id="allList" class="select" size="5"></select>
+  <script>
+    var socket = io.connect();
+
+    window.onload=function(){ socket.emit('reqList', {}) }
+    //ソケット通信 リストの受け取り、表示
+    socket.on('resList', function (data) {
+      listData = data.value;
+      while (allList.firstChild) {
+        allList.removeChild(allList.firstChild);
+      }
+      a = document.createElement('option');
+      a.disabled = true;
+      b = document.createTextNode('全て');
+      a.appendChild(b);
+      allList.appendChild(a)
+      for (let i = 1; i < listData.length; i++) {
+        let a = document.createElement('option');
+        let b;
+        if (listData[i].call) {
+          b = document.createTextNode(listData[i].number + ',' + listData[i].room + ',' + listData[i].status + ',呼び出し中');
+        } else {
+          b = document.createTextNode(listData[i].number + ',' + listData[i].room + ',' + listData[i].status);
+
+        }
+        a.value = i;
+        a.appendChild(b);
+        allList.appendChild(a);
+      }
+    })
+  </script>
+</body>
+
+</html>

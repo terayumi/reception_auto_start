@@ -1,0 +1,111 @@
+<div id="cover"></div>
+<div id="msg" class="msg"><div id="message"></div>
+  <div class="yesno"><div id="count"></div><button class="yes" onclick="con(1);">はい</button><button class="no" onclick="con(0);">いいえ</button>
+  </div>
+</div>
+
+<script>
+  function dousa() {
+    greet();
+  }
+  function check(name, num) {
+    wait(name, num, function (name, num) {
+      msg.style.display = 'none';
+      cover.style.display='none';
+      socket.emit(name, { num: num });
+    })
+  }
+
+  let msg = document.getElementById('msg');
+  let message=document.getElementById('message');
+  let cover=document.getElementById('cover');
+  let count=document.getElementById('count');
+  let flag;
+  function wait(name, num, callback) {
+    flag = -1;
+    msg.style.display = 'block';
+    cover.style.display='block';
+    message.innerHTML=num+'番の方を呼び出しますか';
+
+    let i = 50;
+    let id = setInterval(() => {
+      if (flag == 1) {
+        callback(name, num);
+        clearInterval(id);
+      } else if (flag == 0) {
+        msg.style.display = 'none';
+        cover.style.display='none';
+        clearInterval(id);
+      }
+      if (i % 10 == 0) { count.innerHTML='('+i/10+'s)'}
+      if (i == 0) { callback(name, num); clearInterval(id); }
+
+      i--;
+    }, 100);
+
+  }
+
+  function con(r) {
+    flag = r;
+  }
+
+</script>
+<style>
+  #cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    background-color: #B5DCFF;
+    box-shadow: -2px -2px 4px #B5DCFF;
+    z-index: 1;
+    display: none;
+  }
+
+  .msg {
+    width: 400px;
+    height: 75px;
+
+    padding: 15px;
+    border: #728CAA solid 1px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 4px #728CAA;
+    background-color: white;
+    display: none;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  .yesno {
+    float: right;
+    width: 200px;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .yes {
+    width: 60px;
+    height: 30px;
+    margin-right: 10px;
+    display: inline;
+    font-size: 0.8em;
+
+  }
+
+  .no {
+    width: 60px;
+    height: 30px;
+    display: inline;
+    font-size: 0.8em;
+  }
+  #count{
+    display: inline;
+    width: 70px;
+    margin-right: 10px;
+  }
+</style>

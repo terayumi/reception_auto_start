@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>修正画面</title>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <div>
+    <select id="allList" size="20" onclick="listSelected()">
+    </select>
+    <select id="sousa" disabled size="3">
+      <option disabled>操作を選んでください</option>
+      <option onclick="sousa('status')" value="change">部屋、状態の変更</option>
+      <option onclick="sousa('cancel')" value="cancel">呼び出しの取り消し</option>
+    </select>
+    <select id="selectRoom" disabled size="13" onclick="newSelected()">
+      <% for( let i=1; i < 14; i++ ) { %>
+        <option value="診察室<%= i %>">診察室<%= i %>
+        </option>
+        <% } %>
+    </select>
+    <select id="selectStatus" disabled size="4" onclick="newSelected()">
+      <option value="受付">受付</option>
+      <option value="診察室">診察室</option>
+      <option value="会計">会計</option>
+      <option value="終了">終了</option>
+    </select>
+    <button id="cancel" onclick="on('cancel')">戻る</button>
+    <button id="submit" onclick="on('submit')" disabled>決定</button>
+    <div id="correctLog" class="log"></div>
+  </div>
+  <%- include('design') %>
+    <script>
+      var socket = io.connect();
+
+      //画面起動時の処理
+      let listData, allList, sousaList, selectRoom, selectStatus, submit, confirm;
+      window.onload = function () {
+        socket.emit('reqList', {});
+        listData = [];
+        allList = document.getElementById('allList');
+        sousaList = document.getElementById('sousa');
+        selectRoom = document.getElementById('selectRoom');
+        selectStatus = document.getElementById('selectStatus');
+        submit = document.getElementById('submit');
+      }
+      //ソケット通信 リストの受け取り、表示
+      socket.on('resList', function (data) {
+        console.log('corr53');
+        listData = data.value;
+        while (allList.firstChild) {
+          allList.removeChild(allList.firstChild);
+        }
+        a=document.createElement('option');
+        a.disabled=true;
+        b=document.createTextNode('変更する番号を選んでください');
+        a.appendChild(b);
+        allList.appendChild(a)
+        for (let i = 1; i < listData.length; i++) {
+          let a = document.createElement('option');
+          let b;
+          if (listData[i].call) {
+            b = document.createTextNode(listData[i].number + ',' + listData[i].room + ',' + listData[i].status + ',呼び出し中');
+          } else {
+            b = document.createTextNode(listData[i].number + ',' + listData[i].room + ',' + listData[i].status);
+
+          }
+          a.value = i;
+          a.appendChild(b);
+          allList.appendChild(a);
+        }
+      })
+      //ボタンが押された時の処理
+      function on(name) {
+        switch (name) {
+          case 'cancel':
+            window.history.back();
+            break;
+          case 'submit':
+            let number = allList.value;
+            if (sousaList.value == 'change') {
+              let newRoom = selectRoom.value;
+              let newStatus = selectStatus.value;
+              let result = window.confirm(number + '番' + '\n' + listData[number].room + '→' + newRoom + '\n' + listData[number].status + '→' + newStatus);
+              if (result) {
+                if (newRoom.length > 0) {
+                  socket.emit('newRoom', { num: number, newRoom: newRoom });
+                }
+                if (newStatus.length > 0) {
+                  socket.emit('newStatus', { num: number, newStatus: newStatus })
+                }
+                sousaList.disabled = true;
+                selectRoom.disabled = true;
+                selectStatus.disabled = true;
+                submit.disabled = true;
+              }
+            } else if (sousaList.value == 'cancel') {
+              console.log('cancel' + number);
+              socket.emit('cancel', { num: number });
+              sousaList.disabled = true;
+              selectRoom.disabled = true;
+              selectStatus.disabled = true;
+              submit.disabled = true;
+            }
+            break;
+        }
+      }
+      //選択された時に次の選択肢を表示
+      function listSelected() {
+        let value = allList.value;
+        console.log('list1');
+        if (value.length !== 0) {
+          console.log('list2');
+          submit.disabled = false;
+          sousaList.disabled = false;
+        }
+      }
+      //選択された時に次の選択肢を表示
+      function newSelected() {
+        let value = selectRoom.value + selectStatus.value;
+        if (value.length !== 0) {
+          submit.disabled = false;
+        }
+      }
+      //選択された時に次の選択肢を表示
+      function sousa(meth) {
+        switch (meth) {
+          case 'status':
+            selectRoom.disabled = false;
+            selectStatus.disabled = false;
+            submit.disabled = true;
+            break;
+          case 'cancel':
+            submit.disabled = false;
+            selectRoom.disabled = true;
+            selectStatus.disabled = true;
+        }
+      }
+    </script>
+    <%-include('correctLog')%>
+    <style>
+      *{
+        font-size: 1em;
+      }
+    </style>
+
+
+</body>

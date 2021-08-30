@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>会計</title>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <%- include('confirm') %>
+    <div class="container">
+      <div class="hedder">会計</div>
+      <div class="main">
+        <select id="list" class="select" size="5"></select>
+        <div class="buttons">
+          <div class="box">
+            <button id="call" class="but1" onclick="on('call');">案内<img src="22093716.png" class="img"></button>
+            <button id="end" onclick="on('end');">終了<img src="2512728.png" class="img"></button>
+            <button id="cancel" onclick="location.href='http://localhost:8000/correct'">修正</button>
+          </div>
+        </div>
+      </div>
+      <div id="correctLog" class="log"></div>
+
+    </div>
+    <script>
+      //画面読み込み時の処理
+      window.onload = function () {
+        socket.emit('reqList', {});
+      }
+      var socket = io.connect();
+
+      //ボタンが押された時の処理
+      function on(name) {
+        if (name == 'call') {
+          if (list.selectedIndex === -1) {
+            for (i = 0; i < listData.length; i++) {
+              if (listData[i].status === '会計') {
+                check(name, listData[i].number);
+                return;
+              }
+            }
+            alert('待っている人はいません');
+          } else {
+            check(name, list.value);
+          }
+        } else if (name == 'end') {
+          for (i = 0; i < listData.length; i++) {
+            if (listData[i].status === '会計') {
+              socket.emit(name, { num: listData[i].number });
+              return;
+            }
+          }
+          alert('待っている人はいません');
+        } else {
+          socket.emit(name, { num: listData[i].number });
+        }
+
+      }
+
+
+    </script>
+
+    <%-include('list',{room:'accounting'}) %>
+      <%-include('correctLog')%>
+        <%- include('design') %>
+          <style>
+            .container {
+              grid-template-columns: 40% 30% 30%;
+              grid-template-rows: 14% 76%;
+            }
+
+            .hedder {
+              grid-column-start: 1;
+              grid-column-end: 5;
+            }
+
+            .main {
+              display: flex;
+              grid-column: 1/3;
+              background: radial-gradient(ellipse farthest-side, #B5DCFF, #C1E2FF, #FFFFFF);
+
+            }
+
+            .buttons {
+              display: flex;
+              align-items: flex-end;
+            }
+
+            .box {
+              width: 100%;
+            }
+
+            #call,
+            #end,
+            #cancel {
+              width: 80%;
+              padding: 5%;
+              margin-left: 30%;
+              margin-top: 14%;
+            }
+
+          </style>
+</body>

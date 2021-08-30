@@ -1,0 +1,87 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.min.js"></script>
+<script>
+  let playing = 0;
+  let queue = [];
+  setInterval(() => {
+    if (queue.length > 0 && playing == 0) {
+      playing = 1;
+      let text = queue[0].text;
+      let roomHTML=queue[0].roomHTML;
+      let numHTML=queue[0].numHTML;
+      console.log(queue[0].text);
+      console.log(queue);
+      queue.shift();
+      const data = {
+        "input": {
+          "text": text
+        },
+        "voice": {
+          "languageCode": "ja-JP",
+          "name": "ja-JP-Wavenet-B"
+        },
+        "audioConfig": {
+          "audioEncoding": "MP3",
+          "speaking_rate": "1.00",
+          "pitch": "0.00"
+        }
+      }
+
+      const otherparam = {
+        headers: {
+          "content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify(data),
+        method: "POST"
+      }
+      fetch(url, otherparam)
+        .then(data => { return data.json() })
+        .then(res => {
+          try {
+            let blobUrl = base64ToBlobUrl(res.audioContent)
+            let audio = new Audio();
+            audio.src = blobUrl;
+            //再生終了時メインを空に
+            audio.addEventListener("ended", function () {
+              number.innerHTML = '<p></p>';
+              room.innerHTML = '<p></p>'
+              playing = 0;
+            }, false);
+            ring(function () {
+              number.innerHTML = numHTML;
+              room.innerHTML = roomHTML;
+              audio.play();
+            })
+          } catch (e) {
+            console.log(e)
+            playing = 0;
+          }
+        })
+    }
+  }, 500);
+
+  const chime = new Audio('チャイム.mp3')
+
+  var apiKey = 'AIzaSyDkzdkvFcr0yfvw0pvtg0nFkxBbIsLF71g'
+  const url = "https://texttospeech.googleapis.com/v1/text:synthesize?key=" + apiKey;
+
+  function speak(obj) {
+    queue.push(obj);
+  }
+  function ring(callback) {
+    chime.addEventListener('ended', callback,{once:true})
+
+    chime.play();
+
+  }
+
+
+  // Base64 → BlobUrl
+  function base64ToBlobUrl(base64) {
+    var bin = atob(base64.replace(/^.*,/, ''))
+    var buffer = new Uint8Array(bin.length)
+    for (var i = 0; i < bin.length; i++) {
+      buffer[i] = bin.charCodeAt(i)
+    }
+    return window.URL.createObjectURL(new Blob([buffer.buffer], { type: "audio/wav" }))
+  }
+</script>

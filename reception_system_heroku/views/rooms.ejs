@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>
+    <%= roomName %>
+  </title>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <%- include('confirm') %>
+    <div class="container">
+      <div class="hedder">
+        <div>
+          <%= roomName %>
+        </div>
+      </div>
+      <div class="main">
+        <select id="list" class="select" size="7"></select>
+        <div class="buttons">
+          <div class="box">
+            <button id="call" onclick="on('call');">案内<img src="../22093716.png" class="img"></button>
+            <button id="enter" onclick="on('enter');">入室<img src="../2512728.png" class="img"></button>
+            <button id="leave" onclick="on('leave');">退室<img src="../2512728.png" class="img"></button>
+            <button id="cancel" onclick="location.href='http://localhost:8000/correct'">修正</button>
+          </div>
+        </div>
+      </div>
+      <ol class="log" id="correctLog"></ol>
+    </div>
+    <script>
+      var socket = io.connect();
+      //ボタンが押された時の処理
+      function on(name) {
+        let flag;
+
+        switch (name) {
+          case 'call':
+            flag = '受付';
+            if (list.selectedIndex === -1) {
+              for (i = 0; i < listData.length; i++) {
+                if (listData[i].room === '<%= roomName %>' && listData[i].status === flag) {
+                  check(name, listData[i].number);
+                  return;
+                }
+              }
+              alert('待っている人はいません')
+            } else {
+              check(name, list.value);
+              console.log(listData[list.value].startTime);
+            }
+            break;
+          case 'enter':
+            flag = '受付';
+            if (list.selectedIndex === -1) {
+              for (i = 0; i < listData.length; i++) {
+                if (listData[i].room === '<%= roomName %>' && listData[i].status === flag) {
+                  socket.emit(name, { num: listData[i].number });
+                  return;
+                }
+              }
+              alert('待っている人はいません')
+            } else {
+              socket.emit(name, { num: list.value })
+            }
+          case 'leave':
+            flag = '診察室';
+            if (list.selectedIndex === -1) {
+              for (i = 0; i < listData.length; i++) {
+                if (listData[i].room === '<%= roomName %>' && listData[i].status === flag) {
+                  socket.emit(name, { num: listData[i].number });
+                  return;
+                }
+              }
+              alert('待っている人はいません')
+            } else {
+              socket.emit(name, { num: list.value })
+            }
+        }
+
+      }
+      //画面起動時の処理
+      window.onload = function () {
+        socket.emit('reqList', {});
+      }
+    </script>
+    <%-include('list',{room:roomName}) %>
+      <%-include('correctLog')%>
+        <%- include('design') %>
+
+          <style>
+            .container {
+              grid-template-columns: 40% 30% 30%;
+              grid-template-rows: 14% 76%;
+            }
+
+            .hedder {
+              grid-column: 1/5;
+            }
+
+            .main {
+
+              display: flex;
+              grid-column: 1/3;
+              background: radial-gradient(ellipse farthest-side, #B5DCFF, #C1E2FF, #FFFFFF);
+
+            }
+
+            .buttons {
+              grid-column: 2;
+              display: flex;
+              align-items: flex-end;
+            }
+
+            .box {
+              width: 100%;
+            }
+
+            #call,#enter,#leave,#cancel {
+              width: 40%;
+              padding: 5%;
+              margin-left: 30%;
+              margin-top: 14%;
+            }
+          </style>
+
+</body>
