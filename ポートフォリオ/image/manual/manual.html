@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マニュアル</title>
+</head>
+
+<body>
+  <div id="page_top"><a href="#"></a></div>
+  <div class="header"><img src="../yrs_logo.png" alt="株式会社YRS" style="width: 25%;"></div>
+
+  <div>
+    <p><span style="font-size: 1.5em;">目次</span>(各項目をタップするとその場所までスクロールします。）</p>
+    <ul>
+      <li onclick="sc('id1')">全体の流れ</li>
+      <li onclick="sc('id2')">各画面の詳細</li>
+      <ul>
+        <li onclick="sc('id3')">受付</li>
+        <li onclick="sc('id4')">各診察室</li>
+        <li onclick="sc('id5')">会計</li>
+        <li onclick="sc('id6')">管理</li>
+        <li onclick="sc('id7')">案内文設定</li>
+      </ul>
+    </ul>
+  </div>
+  <h1>業務開始の操作</h1>
+  <ol>
+    <li>タブレット側面の青いボタンを押す</li>
+    <li>画面を下から上にスクロールしてロックを解除する</li>
+    <li>全画面ボタンをタップする</li>
+  </ol>
+  <h1 id="id1">全体の流れ</h1>
+  <h3>受付</h3>
+  <p>それぞれの患者さんの診察室番号のボタンを押して来院を登録する</p>
+  <h3>各診察室</h3>
+  <p>呼び出しボタンで音声案内→入室ボタン→退室ボタン</p>
+  <h3>会計</h3>
+  <p>呼び出しボタンで音声案内→終了ボタン</p>
+  <h1 id="id2">各画面の詳細</h1>
+  <h3 id="id3">受付</h3>
+  <p>左下のボックスに各診察室のボタンがあります。
+    各診察室のボタンを押すと受付番号とアポツールから取得した患者さんの名前が登録され、カードがプリントされます。
+    託児のある患者さんの場合はボタンの下のチェックボックスにチェックを入れてください。
+  </p>
+  <img src="reception.png" alt="受付の画面">
+  <h3 id="id4">各診察室</h3>
+  <p>左側にその診察室に割り当てられた患者さんのリストが表示されます。
+    案内ボタンと入室ボタンはこのリストを選択してから押してください。すでに一人入室している場合、ほかを入室させることはできません。
+    会計、お迎えボタンはすでに入室している人を退室させます。管理ボタンを押すと管理画面が開きます。
+  </p>
+  <img src="rooms.png" alt="診察室の画面">
+  <h3 id="id5">会計</h3>
+  <p>左側には会計を待っている患者さんのリストが表示されます。このリストを選択してから、案内ボタン・終了ボタンを押してください。管理ボタンを押すと管理画面が開きます。</p>
+  <img src="accounting.png" alt="会計の画面">
+  <h3 id="id5.5">託児</h3>
+  <p>左側には託児室に来る患者さんのリストが表示されます。リストを選択してから受付へ、会計へボタンを押してください。管理ボタンを押すと管理画面が開きます。</p>
+  <img src="takuji.png" alt="託児室の画面">
+  <h3 id="id6">管理画面(すべての診療室及び会計のデータの表示と修正）</h3>
+  <p>画面左半分ではそれぞれの患者さんの診察室や今の状態などを変更したり、呼び出しの取り消しをしたりできます。右半分では、変更履歴や全体のデータをすべて削除することができます。</p>
+  <h5>診察室を変更する場合</h5>
+  <ol>
+    <li>受付番号を選択します。</li>
+    <li>「操作を選択してください」から「診察室の変更」を選択します。</li>
+    <li>「診察室を選んでください」から診察室を選択します。</li>
+    <li>決定ボタンを押し、右の修正履歴に変更が表示されたら変更完了です。</li>
+  </ol>
+  <h5>状態(受付、診察室、会計、終了)を変更する場合</h5>
+  <ol>
+    <li>受付番号を選択します。</li>
+    <li>「操作を選択してください」から「状態の変更」を選択します。</li>
+    <li>「状態を選んでください」から状態を選択します。</li>
+    <li>決定ボタンを押し、右の修正履歴に変更が表示されたら変更完了です。</li>
+  </ol>
+  <h5>呼び出しを取り消す場合</h5>
+  <ol>
+    <li>受付番号を選択します。</li>
+    <li>「操作を選択してください」から「呼び出しの取り消し」を選択します。</li>
+    <li>決定ボタンを押し、右の修正履歴に変更が表示されたら変更完了です。</li>
+  </ol>
+  <img src="kanri.png" alt="管理画面">
+  <h3 id="id7">案内文設定の画面</h3>
+  <p>一番上の「テンプレートを選択してください」からよく使う文章を選択して入力できます。真ん中の入力欄からテンプレートに追記したり、新しく書くこともできます。最大150文字まで入力することができます。
+    入力内容が決まったら、決定ボタンを押してください。待合室の呼び出しモニター下部にその文が流れて表示されます。
+  </p>
+  <img src="info.png" alt="案内文設定の画面">
+  <video src="infoText.mp4" loop autoplay muted></video>
+  <h3 id="id8">一覧1</h3>
+  <p>診察室ごとの一覧が表示されます。</p>
+  <img src="itiran1.png" alt="一覧1の画面">
+  <h3 id="id9">一覧2</h3>
+  <p>状態ごとの一覧が表示されます。</p>
+  <img src="itiran2.png" alt="一覧2の画面">
+
+
+  <div style="height: 50px;"></div>
+
+
+
+  <style>
+    
+  .header {
+    /*場所指定*/
+    width: 100%;
+    height: 14%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 250%;
+    background-color: #2F6098;
+    color: white;
+  }
+    img {
+      width: 100%;
+    }
+
+    video{
+      width: 100%;
+    }
+
+    body {
+      background-color: rgb(162, 196, 255, 0.5);
+      width: 100%;
+      max-width: 1000px;
+      margin: 0px auto auto auto;
+    }
+
+    #page_top {
+      width: 200px;
+      height: 50px;
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      background: #3f98ef;
+      opacity: 0.9;
+      
+    }
+
+    #page_top a {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: block;
+      text-decoration: none;
+    }
+
+    #page_top a::before {
+      content: '画面の最初へ戻る';
+      font-size: 1.2em;
+      color: #fff;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin: auto;
+      text-align: center;
+    }
+  </style>
+
+  <script>
+    function sc(id) {
+      console.log(id);
+      let element = document.getElementById(id);
+      console.log(element);
+      let rect = element.getBoundingClientRect();
+      let x = rect.left;
+      let y = rect.top;
+      window.scrollTo(x, y);
+    }
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3Dモデリング</title>
+  <link rel="stylesheet" href="style/common.css">
+</head>
+<body>
+  <div class="main">
+    <h4>ブレンダー</h4>
+    <p>最近始めたばかり。より複雑なモデルを作成できるよう学習中<br>
+    3Dプリンターにも挑戦したい。</p>
+    <p>作品</p>
+    <canvas id="umbrella"></canvas>
+    <canvas id="kasa"></canvas>
+  </div>
+
+  
+  <script src="https://unpkg.com/three@0.140.2/build/three.js"></script>
+  <script src="https://unpkg.com/three@0.137.4/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
+  <script src="show3D/showGLTF.js"></script>
+  <script>
+    
+    // ページの読み込みを待つ
+    window.addEventListener('DOMContentLoaded',show);
+    function show(){
+      let canvas=document.getElementById("umbrella")
+      init(canvas,"image/kasa.gltf")
+
+    }
+  </script>
+  <style>
+    canvas{
+      border: solid;
+      border-color: yellowgreen;
+    }
+  </style>
+</body>
+</html>

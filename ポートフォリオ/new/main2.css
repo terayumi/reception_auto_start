@@ -1,0 +1,23 @@
+
+.container .a2{
+  height: 100vh;
+  background-color: #6A83BC;
+  color: #F2F5FC;
+}
+
+.area .box .title{
+  grid-row-start: 2;
+  text-align: center;
+  color: #F2F5FC;
+  font-size: 50px;
+  padding: 110px 0;
+}
+.a2 .contents{
+  padding: 70px 50px;
+}
+.a2 .contents p{
+  font-size: 3rem;
+}
+.a2 .contents li{
+  font-size: 2rem;
+}

@@ -1,0 +1,17 @@
+
+.container .a1{
+  height: 100vh;
+  background-color: #093F7E;
+}
+.a1 .contents{
+  padding: 90px 50px ;
+  color: #F2F5FC;
+  font-size: 3rem;
+  display: grid;
+  grid-template-rows: 10% 10% 10% 30% 10%;
+  grid-template-columns: 300px auto;
+}
+.contents p{
+  display: inline;
+  margin-right: 100px;
+}
